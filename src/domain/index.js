@@ -2,7 +2,7 @@
 // function that extracts a hostname from a url, returns a function that
 // returns the domain info for the url.
 // Note: can has JavaScript function composition?
-export const domainInfo =
+export const domainInfoFromUrl =
     (domainInfo, extractHostname) => url =>
         domainInfo(extractHostname(url))
 
@@ -10,7 +10,7 @@ export const domainInfo =
 // searches through the keys by trying the most specific domain first,
 // then successivley less-specific domains, finally trying a blank string,
 // and returns the domain info.
-export const findByReducingHostname =
+export const reducingHostnameFinder =
     domainsJson => hostname => {
         const domain =
             expandDomains(hostname)
@@ -25,9 +25,8 @@ export const expandDomains =
             .reduceRight(prependNextDomain, [''])
 
 export const prependNextDomain =
-    (domains, part) => {
-        return [nextDomain(part, domains[0])].concat(domains)
-    }
+    (domains, part) =>
+        [nextDomain(part, domains[0])].concat(domains)
 
 export const join =
     (name1, name2) =>

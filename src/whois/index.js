@@ -2,12 +2,11 @@
 export default
     cmd => hostname =>
         cmd(`whois ${hostname}`)
-            .then(rejectIfNoMatch(hostname))
+            .then(throwIfNoMatch(hostname))
 
-export const rejectIfNoMatch =
+export const throwIfNoMatch =
     hostname => whoisInfo => {
-        const matches = whoisInfo.match(nomatchRx)
-        if (matches) {
+        if (whoisInfo.match(nomatchRx)) {
             throw new Error(`No whois information for ${hostname}`)
         }
         return whoisInfo

@@ -1,20 +1,20 @@
 import {
-    domainInfo, findByReducingHostname, expandDomains, prependNextDomain,
+    domainInfoFromUrl, reducingHostnameFinder, expandDomains, prependNextDomain,
     nextDomain, join
 } from '../../src/domain'
 
 export default
     {
-        domainInfo: {
+        domainInfoFromUrl: {
             'should compose two args': assert => {
                 // TODO: this is pretty lame. we need some spies!
                 const f = x => x
                 const g = x => x
                 const token = {}
-                assert(domainInfo(g, f)(token) === token)
+                assert(domainInfoFromUrl(g, f)(token) === token)
             }
         },
-        findByReducingHostname: {
+        reducingHostnameFinder: {
             'should find the most specific domain': assert => {
                 const domains = {
                     'a.b.c': {},
@@ -23,7 +23,7 @@ export default
                     'foo': {},
                     '': {}
                 }
-                const find = findByReducingHostname(domains)
+                const find = reducingHostnameFinder(domains)
                 assert(find('foo') === domains['foo']) // exact match
                 assert(find('a.b.c') === domains['a.b.c']) // exact match
                 assert(find('foo.b.c') === domains['b.c']) // subdomain
@@ -37,7 +37,7 @@ export default
                     'foo': {},
                     '': {}
                 }
-                const find = findByReducingHostname(domains)
+                const find = reducingHostnameFinder(domains)
                 assert(find('bar') === domains['']) // missing
             }
         },

@@ -1,7 +1,7 @@
 {
-  "name": "frak",
+  "name": "fake-news",
   "version": "1.0.0",
-  "description": "Discovering deep falsities in the media.",
+  "description": "Exploring ML to uncover fake news.",
   "main": "index.js",
   "scripts": {
     "build": "babel --copy-files --out-dir build src",
