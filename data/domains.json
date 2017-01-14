@@ -1,15 +1,15 @@
 {
   "": {
-      "veracity": 0.5
+      "veracity": 0
   },
   "breitbart.com": {
-      "veracity": 0.1
+      "veracity": -0.9
   },
   "com": {
-      "veracity": 0.5
+      "veracity": 0
   },
   "com.co": {
-      "veracity": 0.01
+      "veracity": -0.9
   },
   "nytimes.com": {
       "veracity": 0.85
