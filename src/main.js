@@ -6,6 +6,7 @@ import { first } from './async'
 import whois, { creationDate } from './whois'
 import { expandDomains } from './domain'
 import domainsJson from '../data/domains.json'
+import { logistic } from './curve'
 
 export const main =
     () => {
@@ -13,19 +14,27 @@ export const main =
         const url = process.argv[2]
         // const url = 'http://blog.sciam.com/this-is-a-test'
         const hostname = extractHostname(url)
+        const now = new Date()
+        const ageValue = compose(ageSigmoid, yearsAgo(now))
+        // const ageValue = yearsAgo(now)
         return Promise
             .all([
                 // TODO: investigate generators instead of async ops
-                getWhoisInfo(hostname)().then(creationDate),
+                getWhoisInfo(hostname)().then(creationDate).then(ageValue),
                 getDomainInfo(hostname)()
             ])
             // TODO: transformToWeights
-            // TODO: transform creationDate to age in range 0 to 1
             .then(
                 ([creationDate, { veracity }]) => ({ creationDate, veracity })
             )
             .then(console.log, console.error)
     }
+
+// Functions to convert creation date to a value
+const yearsAgo =
+    recentDate => oldDate =>
+        Math.max(0, recentDate - oldDate) / 1000 / 60 / 60 / 24 / 365
+const ageSigmoid = logistic(0, 4, 1, -3)
 
 // Compose some logging functions
 const adviceHandler = errorHandler(console.error)
