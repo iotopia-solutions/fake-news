@@ -3,7 +3,7 @@ import reporter from './reporter'
 import runner, { success, failure, failureWithStack, RunnerError }
     from './runner'
 import assert from 'assert'
-import domain from './domain'
+import { expandDomains } from './domain'
 import whois from './whois'
 
 const recordFailure =
@@ -12,7 +12,7 @@ const recordFailure =
 const runTests =
     runner(assert, success, recordFailure)
 
-runTests({ domain, whois })
+runTests({ expandDomains, whois })
     .then(reporter(console.log, console.error))
 
 // TODO:

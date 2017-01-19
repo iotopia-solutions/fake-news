@@ -2,7 +2,7 @@ import { exec } from 'child_process'
 import { parse } from 'url'
 import { fromNode } from 'creed'
 import { compose, before, after, errorHandler } from './fn'
-import { first } from './async'
+import { firstWhere } from './async'
 import whois, { creationDate } from './whois'
 import { expandDomains } from './domain'
 import domainsJson from '../data/domains.json'
@@ -14,16 +14,16 @@ export const main =
         const url = process.argv[2]
         // const url = 'http://blog.sciam.com/this-is-a-test'
         const hostname = extractHostname(url)
+        const domains = expandDomains(hostname)
         const now = new Date()
         const ageValue = compose(ageSigmoid, yearsAgo(now))
         // const ageValue = yearsAgo(now)
         return Promise
             .all([
-                // TODO: investigate generators instead of async ops
-                getWhoisInfo(hostname)().then(creationDate).then(ageValue),
-                getDomainInfo(hostname)()
+                getWhoisInfo(domains).then(creationDate).then(ageValue),
+                getDomainInfo(domains)
             ])
-            // TODO: transformToWeights
+            // TODO: transformToWeightedScore
             .then(
                 ([creationDate, { veracity }]) => ({ creationDate, veracity })
             )
@@ -52,7 +52,7 @@ const domainOps = op => hostname =>
     expandDomains(hostname)
         .map(domain => () => op(domain))
 const isDefined = x => typeof x !== 'undefined'
-const firstDefined = first(isDefined)
+const firstDefined = firstWhere(isDefined)
 
 // Compose a function to lookup domain info for a hostname
 const domainLookupOp =
@@ -60,7 +60,8 @@ const domainLookupOp =
         logger('Domain info lookup:'),
         domain => Promise.resolve(domainsJson[domain])
     )
-const getDomainInfo = compose(firstDefined, domainOps(domainLookupOp))
+// const getDomainInfo = compose(firstDefined, domainOps(domainLookupOp))
+const getDomainInfo = firstDefined(domainLookupOp)
 
 // Compose a function that can be used to call shell commands
 // TODO: move this to its own module
@@ -78,4 +79,4 @@ const whoisOp =
         logger('Whois:'),
         domain => whoisCommand(domain)
     )
-const getWhoisInfo = compose(firstDefined, domainOps(whoisOp))
+const getWhoisInfo = firstDefined(whoisOp)

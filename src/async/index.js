@@ -1,43 +1,33 @@
-export const sequence =
-    ops =>
-        ops.reduce(
-            (prev, op) => () => prev().then(op),
-            noop
-        )
+import { coroutine } from 'creed'
 
-// Return a promise for the first resolved promise returned from an
-// array of async operations.  Array is processed from left to right.
-// Provide an optional rejecter function to transform a resolved value into
-// a rejection.
-export const first =
-    predicate => ops => {
-        const rejectFirst = ops.reduce(
-            (prev, op) => () =>
-                prev()
-                    .then(op)
-                    .then(x => { if (predicate(x)) throw x }),
-            noop
-        )
-        return () => rejectFirst().catch(x => x)
-    }
-
-// const catchfirst =
-//     predicate => ops => () =>
-//         first(predicate)(ops)().catch(x=>x)
-
-        // ops.reduce(
-        //     (next, op) =>
-        //         // TODO: is there a way to remove this Promise.resolve()?
-        //         Promise.resolve(op()).then(x => predicate(x) ? x : next),
-        //     noop
-        // )
-
+// Given an array of async operations (promise-returning functions),
+// returns a function that accepts an input value and pushes the value
+// through the sequence of operations, returning a promise for the output
+// of the last operation.
 export const chain =
     ops =>
-        ops.reduce(
-            (prev, op) => x => prev(x).then(op),
-            x => Promise.resolve(x)
+        coroutine(
+            function* (value) {
+                for (const op of ops) {
+                    value = yield op(value)
+                }
+                return value
+            }
         )
 
-const noop = () => Promise.resolve()
-const constant = val => () => Promise.resolve(val)
+// Given a predicate and an async operation (promise-returning function),
+// returna function that accepts values that will be sequenced as input
+// to the operation, returning the first output that passes the predicate.
+export const firstWhere =
+    predicate => op =>
+        coroutine(
+            function* (values) {
+                for (const value of values) {
+                    const result = yield op(value)
+                    if (predicate(result)) return result
+                }
+            }
+        )
+
+// const noop = () => Promise.resolve()
+// const constant = val => () => Promise.resolve(val)

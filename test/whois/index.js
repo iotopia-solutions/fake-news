@@ -19,16 +19,12 @@ export default
                             assert(cmdParams[0][0].match(hostname))
                         }
                     )
-            }
-        },
-        rejectIfNoMatch: {
-            'should throw if whois did not find domain': assert => {
-                assert.throws(
-                    () => rejectIfNoMatch('foo')('No match for')
-                )
             },
-            'should return whois text otherwise': assert => {
-                assert.equal(whoisOutput, rejectIfNoMatch('foo')(whoisOutput))
+            'should return undefined if whois did not find domain': assert => {
+                const cmdStub =
+                    (...x) => Promise.resolve(whoisNoMatchOutput)
+                return whois(cmdStub)('foo.com')
+                    .then(value => assert.strictEqual(value, void 0))
             }
         },
         creationDate: {
@@ -57,3 +53,4 @@ Updated Date: 2016-04-28T07:37:19Z
 Creation Date: ${cDateString}
 Registrar Registration Expiration Date: 2021-06-25T04:00:00Z
 `
+const whoisNoMatchOutput = 'No match for'

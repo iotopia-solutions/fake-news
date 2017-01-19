@@ -2,16 +2,9 @@
 export default
     cmd => hostname =>
         cmd(`whois ${hostname}`)
-            .then(throwIfNoMatch(hostname))
+            .then(checkIfNoMatch(hostname))
 
-export const throwIfNoMatch =
-    hostname => whoisInfo => {
-        if (whoisInfo.match(nomatchRx)) {
-            throw new Error(`No whois information for ${hostname}`)
-        }
-        return whoisInfo
-    }
-
+// Extract the creation date from whois output text.
 export const creationDate =
     whoisInfo => {
         const matches = whoisInfo.match(creationDateRx)
@@ -25,5 +18,12 @@ export const creationDate =
         return new Date(timestamp)
     }
 
+const checkIfNoMatch =
+    hostname => whoisInfo =>
+        whoisInfo.match(nomatchRx)
+            ? undefined
+            : whoisInfo
+
+// RegExps to find things in whois output text.
 const nomatchRx = /^No match for/m
 const creationDateRx = /^Creation Date:\s*(.*)\s*$/m
