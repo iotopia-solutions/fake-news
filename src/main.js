@@ -12,6 +12,7 @@ export const main =
     () => {
         // TODO: validate argument(s)
         const url = process.argv[2]
+        if (!url) throw new Error('Please specify a url.')
         // const url = 'http://blog.sciam.com/this-is-a-test'
         const hostname = extractHostname(url)
         const domains = expandDomains(hostname)
@@ -39,11 +40,6 @@ const ageSigmoid = logistic(0, 4, 1, -3)
 // Compose some logging functions
 const adviceHandler = errorHandler(console.error)
 const logger = msg => adviceHandler((...x) => console.log(msg, ...x))
-// const asyncLogger =
-//     msg =>
-//         adviceHandler(
-//             (...x) => x.pop().then(result => console.log(msg, ...x, result))
-//         )
 
 const extractHostname = url => parse(url).hostname
 

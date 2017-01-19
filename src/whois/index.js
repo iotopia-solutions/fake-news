@@ -1,7 +1,7 @@
 // Look up domain info via whois
 export default
-    cmd => hostname =>
-        cmd(`whois ${hostname}`)
+    shell => hostname =>
+        shell(`whois ${hostname}`)
             .then(checkIfNoMatch(hostname))
 
 // Extract the creation date from whois output text.
