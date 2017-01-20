@@ -56,11 +56,12 @@ the helper libs (see `async`).  This app is still fairly small, so we'll see
 what happens as it grows.
 * *Structure*: I consider this project to be "pure IoC".  Only the composition
 plans (`index.js` files) contain `import` statements.  All other files have
-zero dependencies.  Most of these compostion plans only re-export values
-from sibling modules, too.  Each `index.js` should be accompanied by a `README.md` to explain what a user will find therein.
+zero dependencies.  Most of these composition plans only re-export values
+from sibling modules, too.  Each `index.js` should be accompanied by a `README.md` to describe at a high level what a user will find therein.
 * *Tests*: I'm not satisfied with any of the JavaScript test frameworks.  They
 all have footguns or unfortunate features.  So why not write my own, right?
-The testing framework is a bit rough and is certainly no better than any of the
-popular frameworks, but it was enough to allow me to think about how to
-write a decent test framework.  My next attempt will use most.js to stream
-the tests through a test-report pipeline.  (Yes, I need to write more tests!)
+The testing framework I wrote is a bit rough and is certainly no better than
+any of the popular frameworks, but it was enough to allow me to think about
+how to write a decent test framework.  My next attempt will use most.js
+to stream the tests through a test-report pipeline.  (Yes, yes, I need to
+write more tests!)
